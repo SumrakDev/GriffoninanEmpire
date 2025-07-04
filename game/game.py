@@ -10,6 +10,7 @@ class Location:
                                                  "surname": "None"})
     case: bool = False
     district: str = "None"
+    street: str = "None"
     house_num: str = "None"
     apartment_num: str = "None"
     clue_in_place: list = field(default_factory=lambda: [])
@@ -21,6 +22,9 @@ class Location:
 
     def create_district(self, disctrict: str) -> None:
         self.district = disctrict
+
+    def create_street(self, street: str) -> None:
+        self.district = street
 
     def create_house_num(self, num: int) -> None:
         self.house_num = str(num)
@@ -240,27 +244,20 @@ types_dict = ["injury", "fingerprints",
 @dataclass
 class Clue:
     name: str = "None"
+    place: Location = field(default_factory=lambda: Location())
     type: str = "None"
     kind_of: str = "None"
     descrip: str = "None"
+    owner: NPC = field(default_factory=lambda: NPC())
 
-    def clue_count(self, in_case_clue: list):
-        count = 0
-        for clue in in_case_clue:
-            if self.type == clue.type:
-                count += 1
-        if count == 1:
-            return " были обнаружены"
-        elif count > 1:
-            return " был обнаружен"
+    def clue_descrip(self,) -> str:
+        return (self.name + ": найдена по адрессу " +
+                self.place.district + "р-н" + "ул." +
+                self.place.street + "д." +
+                self.place.house_num)
 
-    def clue_descrip(self, where_found: str,
-                     how_found: str, what_found: str,
-                     params: str) -> str:
-
-        self.descrip = ("При осмотре " + where_found +
-                        what_found + params)
-        return self.descrip
+    def set_owner(self, npc: NPC):
+        self.__dict__["owner"] = npc
 
 
 @dataclass
@@ -272,18 +269,11 @@ class Prints(Clue):
                                                  "Фото-оборудование"])
 
     def clue_type(self):
-        self.type = random.choice(["fingerprints", "legprints",
-                                   "prints_on_item"])
+        self.type = random.choice(["fingerprints", "legprints"])
 
-    def clue_possible_names(self):
-        """Переделать с учётом разделение
-        на единственное множественное число.
-        См. метод clue_count в родительском классе"""
+    def clue_possible_names(self) -> str:
         if self.type == "fingerprints":
-            self.name = "отпечатки лап"
+            self.name = "отпечаток лап"
+            return self.name
         elif self.type == "legprints":
-            self.name = "отпечатки обуви"
-        elif self.type == "prints_on_item":
-            self.name = "следы"
-        else:
-            raise ValueError(f'Тип улик "{self.type}" неизвестен')
+            self.name == "отпечаток обуви"
