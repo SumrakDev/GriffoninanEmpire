@@ -141,6 +141,14 @@ class NPC:
     def explore_body(self, bodypart: str) -> str:
         return self.biology[bodypart]
 
+    def owner_name(self) -> str:
+        if self.gender == "Мужской":
+            return self.name + "у"
+        elif self.gender == "Женский":
+            return self.name + "е"
+        else:
+            raise ValueError('Есть только два гендера')
+
     def test_creation_body(self) -> None:
         self.biology["race"] = random.choice(["Гриффон", "Волк", "Змей"])
         self.name = random.choice(["Герхард", "Вульф", "Зигфрид"])
@@ -198,7 +206,7 @@ class Griffon(NPC):
             raise ValueError('Есть только два гендера')
 
     def create_surname(self) -> None:
-        self.surname = random.choice(['Бисмарк', 'Мольтке', 'Шлиффен',
+        self.surname = random.choice(['Бисмарк', 'Мольткер', 'Шлиффен',
                                       'Гинденбург', 'Людендорф',
                                       'Розенберг', 'фон Раух',
                                       'Гнейзенау', 'Борхардт',
@@ -246,7 +254,6 @@ class Clue:
     name: str = "None"
     place: Location = field(default_factory=lambda: Location())
     type: str = "None"
-    kind_of: str = "None"
     descrip: str = "None"
     owner: NPC = field(default_factory=lambda: NPC())
 
@@ -277,3 +284,17 @@ class Prints(Clue):
             return self.name
         elif self.type == "legprints":
             self.name == "отпечаток обуви"
+            return self.name
+        else:
+            raise ValueError(f'Неверный вид улик: {self.type}')
+
+    def if_on_item(self) -> str:
+        self.type = "fingerprints"
+        self.clue_possible_names()
+
+    def owner_known(self):
+        descrip = (self.descrip +
+                   " Следы принадлежат:" +
+                   f'{self.owner.owner_name()}' +
+                   f'{self.owner.surname}')
+        self.descrip = descrip
