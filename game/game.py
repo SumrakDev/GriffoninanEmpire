@@ -50,7 +50,8 @@ class NPC:
     age: int = 0
     victim: bool = False
     crimer: bool = False
-    biology: dict = field(default_factory=lambda: {"race": "None"})
+    witness: bool = False
+    param: dict = field(default_factory=lambda: {"race": "None"})
 
     def create_gender(self) -> str:
         if self.gender == "Мужской":
@@ -59,34 +60,34 @@ class NPC:
             return "ой"
 
     def create_color(self) -> str:
-        if self.biology["race"] == "Гриффон":
+        if self.param["race"] == "Гриффон":
             return "белыми "
-        elif self.biology["race"] == "Волк":
+        elif self.param["race"] == "Волк":
             return "белой "
-        elif self.biology["race"] == "Змей":
+        elif self.param["race"] == "Змей":
             return "белой "
         else:
-            raise ValueError(f'Раса "{self.biology["race"]}" неизвестна')
+            raise ValueError(f'Раса "{self.param["race"]}" неизвестна')
 
     def create_skin(self) -> str:
-        if self.biology["race"] == "Гриффон":
+        if self.param["race"] == "Гриффон":
             return "перьями "
-        elif self.biology["race"] == "Волк":
+        elif self.param["race"] == "Волк":
             return "шерстью "
-        elif self.biology["race"] == "Змей":
+        elif self.param["race"] == "Змей":
             return "чешуёй "
         else:
-            raise ValueError(f'Раса "{self.biology["race"]}" неизвестна')
+            raise ValueError(f'Раса "{self.param["race"]}" неизвестна')
 
     def create_body_part_race(self) -> list:
-        if self.biology["race"] == "Гриффон":
+        if self.param["race"] == "Гриффон":
             return ["гриффона", "гриффоннки"]
-        elif self.biology["race"] == "Волк":
+        elif self.param["race"] == "Волк":
             return ["волка", "волчицы"]
-        elif self.biology["race"] == "Змей":
+        elif self.param["race"] == "Змей":
             return ["змея", "змеи"]
         else:
-            raise ValueError(f'Раса "{self.biology["race"]}" неизвестна')
+            raise ValueError(f'Раса "{self.param["race"]}" неизвестна')
 
     def create_body_part_gender(self) -> str:
         list_of_race = self.create_body_part_race()
@@ -107,39 +108,39 @@ class NPC:
         return self.create_age() + self.create_body_part_gender()
 
     def create_body(self) -> None:
-        self.biology["head"] = ("Покрытая " +
-                                self.create_color() +
-                                self.create_skin() +
-                                "голова " +
-                                self.create_body_part_owner())
-        self.biology["neck"] = ("Покрытая " +
-                                self.create_color() +
-                                self.create_skin() +
-                                "шея" +
-                                self.create_body_part_owner())
-        self.biology["torso"] = ("Покрытое " +
-                                 self.create_color() +
-                                 self.create_skin() +
-                                 "туловище" +
-                                 self.create_body_part_owner())
-        self.biology["hands"] = ("Покрытые " +
-                                 self.create_color() +
-                                 self.create_skin() +
-                                 "лапы" +
-                                 self.create_body_part_owner())
-        self.biology["legs"] = ("Покрытые " +
-                                self.create_color() +
-                                self.create_skin() +
-                                "задние лапы" +
-                                self.create_body_part_owner())
-        self.biology["tail"] = ("Покрытый " +
-                                self.create_color() +
-                                self.create_skin() +
-                                "хвост" +
-                                self.create_body_part_owner())
+        self.param["head"] = ("Покрытая " +
+                              self.create_color() +
+                              self.create_skin() +
+                              "голова " +
+                              self.create_body_part_owner())
+        self.param["neck"] = ("Покрытая " +
+                              self.create_color() +
+                              self.create_skin() +
+                              "шея" +
+                              self.create_body_part_owner())
+        self.param["torso"] = ("Покрытое " +
+                               self.create_color() +
+                               self.create_skin() +
+                               "туловище" +
+                               self.create_body_part_owner())
+        self.param["hands"] = ("Покрытые " +
+                               self.create_color() +
+                               self.create_skin() +
+                               "лапы" +
+                               self.create_body_part_owner())
+        self.param["legs"] = ("Покрытые " +
+                              self.create_color() +
+                              self.create_skin() +
+                              "задние лапы" +
+                              self.create_body_part_owner())
+        self.param["tail"] = ("Покрытый " +
+                              self.create_color() +
+                              self.create_skin() +
+                              "хвост" +
+                              self.create_body_part_owner())
 
     def explore_body(self, bodypart: str) -> str:
-        return self.biology[bodypart]
+        return self.param[bodypart]
 
     def owner_name(self) -> str:
         if self.gender == "Мужской":
@@ -150,7 +151,7 @@ class NPC:
             raise ValueError('Есть только два гендера')
 
     def test_creation_body(self) -> None:
-        self.biology["race"] = random.choice(["Гриффон", "Волк", "Змей"])
+        self.param["race"] = random.choice(["Гриффон", "Волк", "Змей"])
         self.name = random.choice(["Герхард", "Вульф", "Зигфрид"])
         self.surname = random.choice(["фон Абен", "Хоргольф", "Олафсон"])
         self.gender = random.choice(["Мужской", "Женский"])
@@ -160,21 +161,21 @@ class NPC:
                    f'Фамилия: {self.surname}\n'
                    f'Возраст: {self.age}\n'
                    f'Пол: {self.gender}\n'
-                   f'Расса: {self.biology["race"]}\n'
+                   f'Расса: {self.param["race"]}\n'
                    f'-Физические параметры-\n'
-                   f'Голова: {self.biology["head"]}\n'
-                   f'Шея: {self.biology["neck"]}\n'
-                   f'Туловище: {self.biology["torso"]}\n'
-                   f'Лапы: {self.biology["hands"]}\n'
-                   f'Задние лапы: {self.biology["legs"]}\n'
-                   f'Хвост: {self.biology["tail"]}\n')
+                   f'Голова: {self.param["head"]}\n'
+                   f'Шея: {self.param["neck"]}\n'
+                   f'Туловище: {self.param["torso"]}\n'
+                   f'Лапы: {self.param["hands"]}\n'
+                   f'Задние лапы: {self.param["legs"]}\n'
+                   f'Хвост: {self.param["tail"]}\n')
         print(summary)
 
 
 @dataclass
 class Griffon(NPC):
     clan: str = "None"
-    biology: str = field(default_factory=lambda: {"race": "Гриффон"})
+    param: str = field(default_factory=lambda: {"race": "Гриффон"})
     living_place: Location = field(default_factory=lambda: Location())
 
     def create_age_num(self) -> None:
@@ -227,14 +228,14 @@ class Griffon(NPC):
                    f'Фамилия: {self.surname}\n'
                    f'Возраст: {self.age}\n'
                    f'Пол: {self.gender}\n'
-                   f'Расса: {self.biology["race"]}\n'
+                   f'Расса: {self.param["race"]}\n'
                    f'-Физические параметры-\n'
-                   f'Голова: {self.biology["head"]}\n'
-                   f'Шея: {self.biology["neck"]}\n'
-                   f'Туловище: {self.biology["torso"]}\n'
-                   f'Лапы: {self.biology["hands"]}\n'
-                   f'Задние лапы: {self.biology["legs"]}\n'
-                   f'Хвост: {self.biology["tail"]}\n')
+                   f'Голова: {self.param["head"]}\n'
+                   f'Шея: {self.param["neck"]}\n'
+                   f'Туловище: {self.param["torso"]}\n'
+                   f'Лапы: {self.param["hands"]}\n'
+                   f'Задние лапы: {self.param["legs"]}\n'
+                   f'Хвост: {self.param["tail"]}\n')
         print(summary)
 
 
@@ -244,11 +245,6 @@ print(test_griffon)
 
 
 """Улики"""
-
-types_dict = ["injury", "fingerprints",
-              "legprints", "weapon_of_murder",
-              "prints_on_item", "medical_conclusion"]
-
 
 @dataclass
 class Clue:
@@ -271,13 +267,13 @@ class Clue:
     def use_tool(self, tool: str):
         pass
 
-    def __eq__(self, npc: NPC) -> bool:
+    def __eq__(self, npc: NPC) -> str:
 
         for attr in dir(self):
             if not callable(getattr(self, attr)) and not attr.startswith("__"):
                 if getattr(self, attr) != getattr(npc, attr):
-                    return False
-        return True
+                    return "совпадений не обнаруженно"
+        return f'{self.name}: обнаруженно совпадение'
 
     def name_known(self):
         return f' по имени {self.owner.name}'
@@ -316,7 +312,7 @@ class Prints(Clue):
         self.type = "legprints"
 
     def race_known(self):
-        if self.owner.biology["race"] == "Гриффон":
+        if self.owner.param["race"] == "Гриффон":
             return "прендлежит гриффону"
 
     def name_known(self):
