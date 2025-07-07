@@ -175,6 +175,7 @@ class NPC:
 class Griffon(NPC):
     clan: str = "None"
     biology: str = field(default_factory=lambda: {"race": "Гриффон"})
+    living_place: Location = field(default_factory=lambda: Location())
 
     def create_age_num(self) -> None:
         self.age = random.randint(18, 100)
@@ -252,31 +253,51 @@ types_dict = ["injury", "fingerprints",
 @dataclass
 class Clue:
     name: str = "None"
-    place: Location = field(default_factory=lambda: Location())
     type: str = "None"
     descrip: str = "None"
     owner: NPC = field(default_factory=lambda: NPC())
 
-    def clue_descrip(self,) -> str:
-        return (self.name + ": найдена по адрессу " +
-                self.place.district + "р-н" + "ул." +
-                self.place.street + "д." +
-                self.place.house_num)
+    def clue_descrip(self, place_district: str,
+                     place_street,
+                     place_house_num: str) -> str:
+        return (" найдена по адрессу: " +
+                place_district + " р-н" + " ул." +
+                place_street + " д. " +
+                place_house_num)
 
     def set_owner(self, npc: NPC):
         self.__dict__["owner"] = npc
 
+    def use_tool(self, tool: str):
+        pass
+
+    def __eq__(self, npc: NPC) -> bool:
+
+        for attr in dir(self):
+            if not callable(getattr(self, attr)) and not attr.startswith("__"):
+                if getattr(self, attr) != getattr(npc, attr):
+                    return False
+        return True
+
+    def name_known(self):
+        return f' по имени {self.owner.name}'
+
+    def surname_known(self):
+        return f' фамилии {self.owner.surname}'
+
 
 @dataclass
 class Prints(Clue):
-    type: str = "None"
     tools: list = field(default_factory=lambda: ["Специальный порошок",
                                                  "Щётка с мягкой щетиной",
-                                                 "Плёнка-клей («липучка»)",
-                                                 "Фото-оборудование"])
+                                                 "Плёнка-клей («липучка»)"])
 
-    def clue_type(self):
-        self.type = random.choice(["fingerprints", "legprints"])
+    def clue_type(self, type: str):
+        if type == "random":
+            self.type = random.choice(["fingerprints",
+                                       "legprints"])
+        else:
+            self.type = type
 
     def clue_possible_names(self) -> str:
         if self.type == "fingerprints":
@@ -288,13 +309,26 @@ class Prints(Clue):
         else:
             raise ValueError(f'Неверный вид улик: {self.type}')
 
-    def if_on_item(self) -> str:
+    def on_item(self) -> None:
         self.type = "fingerprints"
-        self.clue_possible_names()
 
-    def owner_known(self):
-        descrip = (self.descrip +
-                   " Следы принадлежат:" +
-                   f'{self.owner.owner_name()}' +
-                   f'{self.owner.surname}')
-        self.descrip = descrip
+    def on_floor(self) -> None:
+        self.type = "legprints"
+
+    def race_known(self):
+        if self.owner.biology["race"] == "Гриффон":
+            return "прендлежит гриффону"
+
+    def name_known(self):
+        return f' по имени {self.owner.name}'
+
+    def surname_known(self):
+        return f' фамилии {self.owner.surname}'
+
+
+@dataclass
+class Blood(Clue):
+    tools: list = field(default_factory=lambda: ["Ножницы",
+                                                 "Скребок для сбора скоб",
+                                                 "Раствор цитрата натрия",
+                                                 "Ватные палочки"])
