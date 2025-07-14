@@ -315,3 +315,19 @@ class Blood(Clue):
     tool_need: list = field(default_factory=lambda: ["ватная палочка",
                                                      "пробирка",
                                                      "жидкость"])
+
+    def use_tool(self, tool: list):
+        nessesary_tools: list = self.tool_need
+        for i in self.tool_need:
+            if i in tool:
+                nessesary_tools.remove(i)
+        if len(nessesary_tools) == 0:
+            return "Образцы крови собраны"
+        else:
+            return nessesary_tools
+
+    def create_wall(self):
+        self.name + "на стене"
+
+    def create_floor(self):
+        self.name + "с пола"
