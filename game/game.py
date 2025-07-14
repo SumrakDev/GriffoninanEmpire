@@ -240,21 +240,25 @@ class Griffon(NPC):
 
 
 test_griffon = Griffon()
+test_griffon_2 = Griffon()
+test_griffon_2.test_creation_body()
 test_griffon.test_creation_body()
 print(test_griffon)
 
 
 """Улики"""
 
+
 @dataclass
 class Clue:
     name: str = "None"
     type: str = "None"
     descrip: str = "None"
+    tool_need: list = field(default_factory=lambda: [])
     owner: NPC = field(default_factory=lambda: NPC())
 
     def clue_descrip(self, place_district: str,
-                     place_street,
+                     place_street: str,
                      place_house_num: str) -> str:
         return (" найдена по адрессу: " +
                 place_district + " р-н" + " ул." +
@@ -267,64 +271,47 @@ class Clue:
     def use_tool(self, tool: str):
         pass
 
-    def __eq__(self, npc: NPC) -> str:
+    def __eq__(self, npc: NPC) -> bool:
+        for attr in dir(self.owner):
+            if (not callable(getattr(self.owner, attr))
+                and not attr.startswith("__")):
+                if getattr(self.owner, attr) != getattr(npc, attr):
+                    return False
+        return True
 
-        for attr in dir(self):
-            if not callable(getattr(self, attr)) and not attr.startswith("__"):
-                if getattr(self, attr) != getattr(npc, attr):
-                    return "совпадений не обнаруженно"
-        return f'{self.name}: обнаруженно совпадение'
-
-    def name_known(self):
-        return f' по имени {self.owner.name}'
-
-    def surname_known(self):
-        return f' фамилии {self.owner.surname}'
+    def summary(self, npc):
+        npc_name = self.owner.owner_name()
+        npc_surname = {self.owner.surname}
+        if self.__eq__(npc) != "совпадений не обнаруженно":
+            return f'Пренадлежит: {npc_name} {npc_surname}'
 
 
-@dataclass
-class Prints(Clue):
-    tools: list = field(default_factory=lambda: ["Специальный порошок",
-                                                 "Щётка с мягкой щетиной",
-                                                 "Плёнка-клей («липучка»)"])
+class Print(Clue):
+    name: str = "Отпечатки"
+    type: str = "prints"
+    tool_need: list = field(default_factory=lambda: ["порошок",
+                                                     "кисть"])
 
-    def clue_type(self, type: str):
-        if type == "random":
-            self.type = random.choice(["fingerprints",
-                                       "legprints"])
+    def use_tool(self, tool: list):
+        nessesary_tools: list = self.tool_need
+        for i in self.tool_need:
+            if i in tool:
+                nessesary_tools.remove(i)
+        if len(nessesary_tools) == 0:
+            return "Отпечатки собраны"
         else:
-            self.type = type
+            return nessesary_tools
 
-    def clue_possible_names(self) -> str:
-        if self.type == "fingerprints":
-            self.name = "отпечаток лап"
-            return self.name
-        elif self.type == "legprints":
-            self.name == "отпечаток обуви"
-            return self.name
-        else:
-            raise ValueError(f'Неверный вид улик: {self.type}')
+    def create_finger(self):
+        self.name + "лап"
 
-    def on_item(self) -> None:
-        self.type = "fingerprints"
-
-    def on_floor(self) -> None:
-        self.type = "legprints"
-
-    def race_known(self):
-        if self.owner.param["race"] == "Гриффон":
-            return "прендлежит гриффону"
-
-    def name_known(self):
-        return f' по имени {self.owner.name}'
-
-    def surname_known(self):
-        return f' фамилии {self.owner.surname}'
+    def create_footprints(self):
+        self.name + "задних лап"
 
 
-@dataclass
 class Blood(Clue):
-    tools: list = field(default_factory=lambda: ["Ножницы",
-                                                 "Скребок для сбора скоб",
-                                                 "Раствор цитрата натрия",
-                                                 "Ватные палочки"])
+    name: str = "Следы крови"
+    type: str = "blood"
+    tool_need: list = field(default_factory=lambda: ["ватная палочка",
+                                                     "пробирка",
+                                                     "жидкость"])
