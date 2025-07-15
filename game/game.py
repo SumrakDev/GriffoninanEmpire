@@ -49,9 +49,27 @@ class NPC:
     gender: str = "None"
     age: int = 0
     victim: bool = False
-    crimer: bool = False
+    guilty: bool = False
     witness: bool = False
     param: dict = field(default_factory=lambda: {"race": "None"})
+
+    def random_gender(self) -> None:
+        self.gender = random.choice(["Мужской", "Женский"])
+
+    def custom_gender(self, input_gender: str) -> None:
+        if input_gender == "Мужской":
+            self.gender = input_gender
+        elif input_gender == "Женский":
+            self.gender = input_gender
+        else:
+            print("Есть только два гендера")
+            self.gender = "Мужской"
+
+    def random_age(self) -> None:
+        self.age = random.randint(18, 21)
+
+    def custom_age(self, input_age: int) -> None:
+        self.gender = input_age
 
     def create_gender(self) -> str:
         if self.gender == "Мужской":
@@ -181,6 +199,11 @@ class Griffon(NPC):
     def create_age_num(self) -> None:
         self.age = random.randint(18, 100)
 
+    def random_clan(self) -> None:
+        self.clan = random.choice(["Вороны",
+                                   "Голуби",
+                                   "Безродные"])
+
     def create_clan(self, clan) -> None:
         self.clan = clan
 
@@ -217,7 +240,7 @@ class Griffon(NPC):
                                       'Тресков', 'Лютцов', 'Вернер',
                                       'Велленродт'])
 
-    def test_creation_body(self) -> None:
+    def creation_body(self) -> None:
         self.gender = random.choice(["Мужской", "Женский"])
         self.create_clan(random.choice(["Вороны", "Голуби", "Безродные"]))
         self.create_name()
@@ -241,8 +264,8 @@ class Griffon(NPC):
 
 test_griffon = Griffon()
 test_griffon_2 = Griffon()
-test_griffon_2.test_creation_body()
-test_griffon.test_creation_body()
+test_griffon_2.creation_body()
+test_griffon.creation_body()
 print(test_griffon)
 
 
@@ -274,18 +297,21 @@ class Clue:
     def __eq__(self, npc: NPC) -> bool:
         for attr in dir(self.owner):
             if (not callable(getattr(self.owner, attr))
-                and not attr.startswith("__")):
+                    and not attr.startswith("__")):
                 if getattr(self.owner, attr) != getattr(npc, attr):
                     return False
         return True
 
-    def summary(self, npc):
+    def summary(self, npc) -> str:
         npc_name = self.owner.owner_name()
         npc_surname = {self.owner.surname}
-        if self.__eq__(npc) != "совпадений не обнаруженно":
+        if self.__eq__(npc) is True:
             return f'Пренадлежит: {npc_name} {npc_surname}'
+        else:
+            return 'Улика не имеет отношения к проверяемому'
 
 
+@dataclass
 class Print(Clue):
     name: str = "Отпечатки"
     type: str = "prints"
@@ -309,6 +335,7 @@ class Print(Clue):
         self.name + "задних лап"
 
 
+@dataclass
 class Blood(Clue):
     name: str = "Следы крови"
     type: str = "blood"
@@ -331,3 +358,40 @@ class Blood(Clue):
 
     def create_floor(self):
         self.name + "с пола"
+
+
+"""Дело"""
+
+
+@dataclass
+class Case:
+    name: str = "None"
+    motivation: str = "None"
+    hour: int = 0
+    minutes: int = 0
+    clues: list = field(default_factory=lambda: [])
+    victim: NPC = field(default_factory=lambda: NPC())
+    guilty: NPC = field(default_factory=lambda: NPC())
+    crime_place: Location = field(default_factory=lambda: Location())
+    witnesses: list = field(default_factory=lambda: [])
+
+    def create_custom_name(self, name: str) -> None:
+        self.name = name
+
+
+@dataclass
+class Murder(Case):
+    motivation: str = "Убийство"
+
+    def murder_type(self) -> list:
+        return random.choice(["на почве ревности",
+                              "на почве личной неприязни",
+                              "на семейно-бытовой почве",
+                              "с целью грабежа"])
+
+    def create_victim(self) -> None:
+        self.victim = Griffon()
+        self.victim.random_gender()
+        self.victim.random_age(random.randint(18, 36))
+        self.victim.random_clan()
+        self.victim.create_body()
