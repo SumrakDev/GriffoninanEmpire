@@ -391,7 +391,8 @@ class Murder(Case):
 
     def create_victim(self) -> None:
         self.victim = Griffon()
+        self.victim.victim = True
         self.victim.random_gender()
-        self.victim.random_age(random.randint(18, 36))
+        self.victim.custom_age(random.randint(18, 36))
         self.victim.random_clan()
         self.victim.create_body()
