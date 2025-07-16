@@ -360,6 +360,19 @@ class Blood(Clue):
         self.name + "с пола"
 
 
+@dataclass
+class Note(Clue):
+    name: str = "Записка"
+    type: str = "note"
+    descrip: str = "None"
+
+    def create_note(self, note_text) -> None:
+        self.descrip = note_text
+
+    def read_note(self) -> str:
+        return self.descrip
+
+
 """Дело"""
 
 
