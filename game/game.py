@@ -66,7 +66,7 @@ class NPC:
             self.gender = "Мужской"
 
     def random_age(self) -> None:
-        self.age = random.randint(18, 21)
+        self.age = random.randint(18, 76)
 
     def custom_age(self, input_age: int) -> None:
         self.gender = input_age
@@ -359,6 +359,9 @@ class Blood(Clue):
     def create_floor(self):
         self.name + "с пола"
 
+    def create_weapon(self):
+        self.name + "на орудии убийства"
+
 
 @dataclass
 class Note(Clue):
@@ -371,6 +374,46 @@ class Note(Clue):
 
     def read_note(self) -> str:
         return self.descrip
+
+
+@dataclass
+class WeaponClue(Clue):
+    name: str = "Оружие"
+    type: str = "weapon"
+    additional_clue: list = field(default_factory=lambda: [])
+
+    def create_name(self, name: str) -> None:
+        self.name += (" :" + name)
+
+    def add_clues(self, clue: Clue) -> None:
+        self.additional_clue.append(clue)
+
+
+"""Предметы"""
+
+
+@dataclass
+class Item:
+    name: str = "None"
+    type: str = "None"
+    clues: dict = field(default_factory=lambda: {})
+
+    def create_name(self, name: str) -> None:
+        self.name = name
+
+    def create_params(self, params: dict) -> None:
+        self.params = params
+
+    def create_clue(self, clue: Clue) -> None:
+        self.params[clue.name] = clue
+
+
+@dataclass
+class Weapon(Item):
+    type: str = "weapon"
+    damage: int = 0
+    ammo_type: str = "None"
+    ammo_loaded: int = 0
 
 
 """Дело"""
@@ -388,6 +431,18 @@ class Case:
     crime_place: Location = field(default_factory=lambda: Location())
     witnesses: list = field(default_factory=lambda: [])
 
+    def create_NPC(self) -> Griffon:
+        npc = Griffon()
+        npc.random_gender()
+        npc.random_age()
+        npc.random_clan()
+        npc.create_body()
+        return npc
+
+    def create_victim(self) -> None:
+        self.victim = self.create_NPC()
+        self.victim.victim = True
+
     def create_custom_name(self, name: str) -> None:
         self.name = name
 
@@ -396,16 +451,14 @@ class Case:
 class Murder(Case):
     motivation: str = "Убийство"
 
-    def murder_type(self) -> list:
-        return random.choice(["на почве ревности",
-                              "на почве личной неприязни",
-                              "на семейно-бытовой почве",
-                              "с целью грабежа"])
+    def murder_type(self) -> str:
+        return random.choice([" на почве ревности",
+                              " на почве личной неприязни",
+                              " на семейно-бытовой почве",
+                              " с целью грабежа"])
 
-    def create_victim(self) -> None:
-        self.victim = Griffon()
-        self.victim.victim = True
-        self.victim.random_gender()
-        self.victim.custom_age(random.randint(18, 36))
-        self.victim.random_clan()
-        self.victim.create_body()
+    def murder_motiv_create(self):
+        self.motivation += self.murder_type()
+
+    def create_guilty(self):
+        self.create_victim()
