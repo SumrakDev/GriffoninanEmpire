@@ -9,7 +9,6 @@ screen test_case_screen:
         vbox:
             text "Имя : [test_case.name]"
             text "Мотив : [test_case.motivation]"
-            text "Улики: [clue_list]"
             text "Убийца: [test_case.guilty.name] [test_case.guilty.surname]"
             text "Жертва: [test_case.victim.name] [test_case.victim.surname]"
             text "[weapon]"
@@ -34,5 +33,5 @@ label start:
 label test_case_loc:
 
     "Тестовое окно будет здесь"
-    
+
     call screen test_case_screen

@@ -483,7 +483,7 @@ class Murder(Case):
                 self.guilty.surname = self.victim.surname
                 self.guilty.age = self.victim.age + random.randint(-2, 2)
             else:
-                self.guilty.gender = "Мужчина"
+                self.guilty.gender = "Мужской"
                 self.guilty.random_name()
                 self.guilty.surname = self.victim.surname
                 self.guilty.age = self.victim.age + random.randint(-2, 2)
