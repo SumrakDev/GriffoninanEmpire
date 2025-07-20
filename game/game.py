@@ -374,7 +374,7 @@ class Note(Clue):
 
 @dataclass
 class WeaponClue(Clue):
-    name: str = "Оружие"
+    name: str = "Орудие убийства"
     type: str = "weapon"
     additional_clue: list = field(default_factory=lambda: [])
 
@@ -382,10 +382,10 @@ class WeaponClue(Clue):
         name = random.choice(["кинжал",
                               "дубина",
                               "пистолет"])
-        self.name += (" :" + name)
+        self.name += (": " + name)
 
     def create_name(self, name: str) -> None:
-        self.name += (" :" + name)
+        self.name += (": " + name)
 
     def add_clues(self, clue: Clue) -> None:
         self.additional_clue.append(clue)
@@ -527,6 +527,13 @@ class Murder(Case):
         self.prepare_guilty()
         weapon: WeaponClue = self.prepare_weapon()
         self.prepare_clues(weapon)
+        if self.clues[0].name == "Орудие убийства: кинжал":
+            self.victim.param["torso"] += "\n На теле видна колотая рана"
+        elif self.clues[0].name == "Орудие убийства: дубина":
+            self.victim.param["head"] += ("\n На голове видны следы"
+                                          + "от удара тупым предметом")
+        elif self.clues[0].name == "Орудие убийства: пистолет":
+            self.victim.param["torso"] += ("\n На теле видны пулевые ранения")
         for i in range(1):
             fingerprints: Clue = self.prepare_fingerprints()
             self.prepare_clues(fingerprints)
