@@ -38,6 +38,9 @@ class Location:
     def place_items(self, item_list: list) -> None:
         self.item_in_place = item_list
 
+    def set_case(self, bool: bool) -> None:
+        self.case = bool
+
 
 """НПС"""
 
@@ -457,7 +460,7 @@ class Case:
         self.name = name
 
     def prepare_clues(self, clue: Clue) -> None:
-        self.clues += clue
+        self.clues.append(clue)
 
 
 @dataclass
@@ -490,12 +493,14 @@ class Murder(Case):
     def prepare_fingerprints(self) -> Print:
         prints: Print = Print()
         prints.create_finger()
+        return prints
 
     def prepare_footprints(self) -> Print:
         prints: Print = Print()
         prints.create_footprints()
+        return prints
 
-    def prepare_weapon(self):
+    def prepare_weapon(self) -> WeaponClue:
         weapon: WeaponClue = WeaponClue()
         fingerprints: Print = self.prepare_fingerprints()
         fingerprints.owner = self.guilty
@@ -504,3 +509,26 @@ class Murder(Case):
         weapon.additional_clue.append(fingerprints)
         weapon.additional_clue.append(blood)
         weapon.random_name()
+        weapon.owner = self.guilty
+        return weapon
+
+    def random_clue_owner(self, clue: Clue):
+        dice = random.randint(0, 1)
+        if dice == 0:
+            clue.set_owner(self.victim)
+        else:
+            clue.set_owner(self.guilty)
+
+    def test_create_murder(self):
+        self.murder_type()
+        self.prepare_guilty()
+        weapon: WeaponClue = self.prepare_weapon()
+        self.prepare_clues(weapon)
+        for i in range(10):
+            fingerprints: Clue = self.prepare_fingerprints()
+            self.prepare_clues(fingerprints)
+        for i in range(10):
+            footprints: Clue = self.prepare_footprints()
+            self.prepare_clues(footprints)
+        for i in self.clues:
+            self.random_clue_owner(i)
