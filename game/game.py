@@ -46,7 +46,7 @@ class Location:
 
 
 @dataclass
-class NPC:
+class NPCmain:
     name: str = "None"
     surname: str = "None"
     gender: str = "None"
@@ -194,7 +194,7 @@ class NPC:
 
 
 @dataclass
-class Griffon(NPC):
+class Griffon(NPCmain):
     clan: str = "None"
     param: str = field(default_factory=lambda: {"race": "Гриффон"})
     living_place: Location = field(default_factory=lambda: Location())
@@ -281,7 +281,7 @@ class Clue:
     type: str = "None"
     descrip: str = "None"
     tool_need: list = field(default_factory=lambda: [])
-    owner: NPC = field(default_factory=lambda: NPC())
+    owner: NPCmain = field(default_factory=lambda: NPCmain())
 
     def clue_descrip(self, place_district: str,
                      place_street: str,
@@ -291,13 +291,13 @@ class Clue:
                 place_street + " д. " +
                 place_house_num)
 
-    def set_owner(self, npc: NPC):
+    def set_owner(self, npc: NPCmain):
         self.owner = npc
 
     def use_tool(self, tool: str):
         pass
 
-    def __eq__(self, npc: NPC) -> bool:
+    def __eq__(self, npc: NPCmain) -> bool:
         for attr in dir(self.owner):
             if (not callable(getattr(self.owner, attr))
                     and not attr.startswith("__")):
@@ -435,8 +435,8 @@ class Case:
     hour: int = 0
     minutes: int = 0
     clues: list = field(default_factory=lambda: [])
-    victim: NPC = field(default_factory=lambda: NPC())
-    guilty: NPC = field(default_factory=lambda: NPC())
+    victim: NPCmain = field(default_factory=lambda: NPCmain())
+    guilty: NPCmain = field(default_factory=lambda: NPCmain())
     crime_place: Location = field(default_factory=lambda: Location())
     witnesses: list = field(default_factory=lambda: [])
 
