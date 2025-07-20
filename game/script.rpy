@@ -8,6 +8,7 @@ screen test_case_screen:
         xpos 100
         vbox:
             text "Имя : [test_case.name]"
+            text "Мотив : [test_case.motivation]"
             text "Улики: [clue_list]"
             text "Убийца: [test_case.guilty.name] [test_case.guilty.surname]"
             text "Жертва: [test_case.victim.name] [test_case.victim.surname]"
