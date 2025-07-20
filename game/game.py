@@ -331,10 +331,10 @@ class Print(Clue):
             return nessesary_tools
 
     def create_finger(self):
-        self.name + "лап"
+        self.name += " лап"
 
     def create_footprints(self):
-        self.name + "задних лап"
+        self.name += " задних лап"
 
 
 @dataclass
