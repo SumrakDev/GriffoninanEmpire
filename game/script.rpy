@@ -4,5 +4,7 @@
 label start:
 
     $ test_case = Murder()
+    python:
+        test_case.test_create_murder()
 
     return
