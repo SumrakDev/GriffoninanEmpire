@@ -10,7 +10,7 @@ screen test_case_screen:
             text "Имя : [test_case.name]"
             text "Улики: [clue_list]"
             text "Убийца: [test_case.guilty.name] [test_case.guilty.surname]"
-            text "Жертва: [test_case.guilty.name] [test_case.guilty.surname]"
+            text "Жертва: [test_case.victim.name] [test_case.victim.surname]"
             text "[weapon]"
 
 
