@@ -2,3 +2,4 @@
 log.txt
 traceback.txt
 errors.txt
+*.rpyc
