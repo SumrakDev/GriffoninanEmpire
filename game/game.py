@@ -472,16 +472,22 @@ class Murder(Case):
 
     def prepare_guilty(self) -> None:
         self.create_victim()
-        if self.motivation == "Убиство на семейно-бытовой почве":
+        if self.motivation == "Убийство на семейно-бытовой почве":
             self.create_guilty()
-            self.guilty.surname = self.victim.surname
-            self.guilty.age = self.victim.age + random.randint(-2, 2)
+            """Убрать дубликат в отдельный метод,
+            на будущее исключить генерирование
+            семейной связи в деле перенести её к НПС"""
             if self.victim.gender == "Мужской":
                 self.guilty.gender = "Женский"
                 self.guilty.random_name()
+                self.guilty.surname = self.victim.surname
+                self.guilty.age = self.victim.age + random.randint(-2, 2)
             else:
                 self.guilty.gender = "Мужчина"
-        elif self.motivation != "Убиство на семейно-бытовой почве":
+                self.guilty.random_name()
+                self.guilty.surname = self.victim.surname
+                self.guilty.age = self.victim.age + random.randint(-2, 2)
+        elif self.motivation != "Убийство на семейно-бытовой почве":
             self.create_guilty()
         else:
             raise ValueError(f'Мотив убиства "{self.motivation}"'
