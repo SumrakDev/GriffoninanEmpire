@@ -57,10 +57,27 @@ class NPCmain:
     param: dict = field(default_factory=lambda: {"race": "None"})
 
     def random_name(self) -> None:
-        self.name = random.choice(["Герхард", "Вульф", "Зигфрид"])
+        if self.gender == "Мужской":
+            self.name = random.choice(["Дитер", "Карл", "Гюнтер",
+                                       "Рихард", "Максимилиан", "Кристиан"
+                                       ])
+        elif self.gender == "Женский":
+            self.name = random.choice(["Эрика", "Урсула", "Инге",
+                                       "Герта", "Магда", "Регина",
+                                       "Берта", "Эдит", "Биргит",
+                                       "Констанца"])
+        else:
+            raise ValueError('Есть только два гендера')
 
     def random_surname(self) -> None:
-        self.surname = random.choice(["фон Абен", "Хоргольф", "Олафсон"])
+        self.surname = random.choice(['Бисмарк', 'Мольткер', 'Шлиффен',
+                                      'Гинденбург', 'Людендорф',
+                                      'Розенберг', 'фон Раух',
+                                      'Гнейзенау', 'Борхардт',
+                                      'Штайн', 'Веймар', 'Лихтенштейн',
+                                      'Блюментал', 'Геннингсен', 'Вайнер',
+                                      'Тресков', 'Лютцов', 'Вернер',
+                                      'Велленродт'])
 
     def random_gender(self) -> None:
         self.gender = random.choice(["Мужской", "Женский"])
@@ -226,34 +243,11 @@ class Griffon(NPCmain):
         else:
             raise ValueError(f'Клан "{self.clan}" неизвестен')
 
-    def create_name(self) -> None:
-        if self.gender == "Мужской":
-            self.name = random.choice(["Дитер", "Карл", "Гюнтер",
-                                       "Рихард", "Максимилиан", "Кристиан"
-                                       ])
-        elif self.gender == "Женский":
-            self.name = random.choice(["Эрика", "Урсула", "Инге",
-                                       "Герта", "Магда", "Регина",
-                                       "Берта", "Эдит", "Биргит",
-                                       "Констанца"])
-        else:
-            raise ValueError('Есть только два гендера')
-
-    def create_surname(self) -> None:
-        self.surname = random.choice(['Бисмарк', 'Мольткер', 'Шлиффен',
-                                      'Гинденбург', 'Людендорф',
-                                      'Розенберг', 'фон Раух',
-                                      'Гнейзенау', 'Борхардт',
-                                      'Штайн', 'Веймар', 'Лихтенштейн',
-                                      'Блюментал', 'Геннингсен', 'Вайнер',
-                                      'Тресков', 'Лютцов', 'Вернер',
-                                      'Велленродт'])
-
     def creation_body(self) -> None:
         self.gender = random.choice(["Мужской", "Женский"])
         self.create_clan(random.choice(["Вороны", "Голуби", "Безродные"]))
-        self.create_name()
-        self.create_surname()
+        self.random_name()
+        self.random_surname()
         self.create_age_num()
         self.create_body()
         summary = (f'Имя: {self.name}\n'
@@ -441,9 +435,9 @@ class Case:
 
     def create_NPC(self) -> Griffon:
         npc = Griffon()
+        npc.random_gender()
         npc.random_name()
         npc.random_surname()
-        npc.random_gender()
         npc.random_age()
         npc.random_clan()
         npc.create_body()
@@ -481,8 +475,10 @@ class Murder(Case):
         if self.motivation == "Убиство на семейно-бытовой почве":
             self.create_guilty()
             self.guilty.surname = self.victim.surname
-            if self.victim.gender == "Мужчина":
-                self.guilty.gender = "Женщина"
+            self.guilty.age = self.victim.age + random.randint(-2, 2)
+            if self.victim.gender == "Мужской":
+                self.guilty.gender = "Женский"
+                self.guilty.random_name()
             else:
                 self.guilty.gender = "Мужчина"
         elif self.motivation != "Убиство на семейно-бытовой почве":
