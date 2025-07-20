@@ -56,6 +56,12 @@ class NPCmain:
     witness: bool = False
     param: dict = field(default_factory=lambda: {"race": "None"})
 
+    def random_name(self) -> None:
+        self.name = random.choice(["Герхард", "Вульф", "Зигфрид"])
+
+    def random_surname(self) -> None:
+        self.surname = random.choice(["фон Абен", "Хоргольф", "Олафсон"])
+
     def random_gender(self) -> None:
         self.gender = random.choice(["Мужской", "Женский"])
 
@@ -265,13 +271,6 @@ class Griffon(NPCmain):
         print(summary)
 
 
-test_griffon = Griffon()
-test_griffon_2 = Griffon()
-test_griffon_2.creation_body()
-test_griffon.creation_body()
-print(test_griffon)
-
-
 """Улики"""
 
 
@@ -386,9 +385,9 @@ class WeaponClue(Clue):
     additional_clue: list = field(default_factory=lambda: [])
 
     def random_name(self) -> None:
-        name = random.choice([["кинжал",
-                               "дубина",
-                               "пистолет"]])
+        name = random.choice(["кинжал",
+                              "дубина",
+                              "пистолет"])
         self.name += (" :" + name)
 
     def create_name(self, name: str) -> None:
@@ -442,6 +441,8 @@ class Case:
 
     def create_NPC(self) -> Griffon:
         npc = Griffon()
+        npc.random_name()
+        npc.random_surname()
         npc.random_gender()
         npc.random_age()
         npc.random_clan()
@@ -520,7 +521,7 @@ class Murder(Case):
             clue.set_owner(self.guilty)
 
     def test_create_murder(self):
-        self.murder_type()
+        self.motiv_create()
         self.prepare_guilty()
         weapon: WeaponClue = self.prepare_weapon()
         self.prepare_clues(weapon)
