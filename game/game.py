@@ -527,10 +527,10 @@ class Murder(Case):
         self.prepare_guilty()
         weapon: WeaponClue = self.prepare_weapon()
         self.prepare_clues(weapon)
-        for i in range(10):
+        for i in range(1):
             fingerprints: Clue = self.prepare_fingerprints()
             self.prepare_clues(fingerprints)
-        for i in range(10):
+        for i in range(1):
             footprints: Clue = self.prepare_footprints()
             self.prepare_clues(footprints)
         for i in self.clues:
