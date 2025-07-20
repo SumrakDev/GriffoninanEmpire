@@ -289,7 +289,7 @@ class Clue:
                 place_house_num)
 
     def set_owner(self, npc: NPC):
-        self.__dict__["owner"] = npc
+        self.owner = npc
 
     def use_tool(self, tool: str):
         pass
@@ -443,8 +443,15 @@ class Case:
         self.victim = self.create_NPC()
         self.victim.victim = True
 
+    def create_guilty(self) -> None:
+        self.guilty = self.create_NPC()
+        self.guilty.guilty = True
+
     def create_custom_name(self, name: str) -> None:
         self.name = name
+
+    def prepare_clues(self, clue: Clue) -> None:
+        self.clues += clue
 
 
 @dataclass
@@ -452,13 +459,37 @@ class Murder(Case):
     motivation: str = "Убийство"
 
     def murder_type(self) -> str:
-        return random.choice([" на почве ревности",
-                              " на почве личной неприязни",
+        return random.choice([" на почве личной неприязни",
                               " на семейно-бытовой почве",
                               " с целью грабежа"])
 
-    def murder_motiv_create(self):
+    def motiv_create(self) -> None:
         self.motivation += self.murder_type()
 
-    def create_guilty(self):
+    def prepare_guilty(self) -> None:
         self.create_victim()
+        if self.motivation == "Убиство на семейно-бытовой почве":
+            self.create_guilty()
+            self.guilty.surname = self.victim.surname
+            if self.victim.gender == "Мужчина":
+                self.guilty.gender = "Женщина"
+            else:
+                self.guilty.gender = "Мужчина"
+        elif self.motivation != "Убиство на семейно-бытовой почве":
+            self.create_guilty()
+        else:
+            raise ValueError(f'Мотив убиства "{self.motivation}"'
+                             + 'неверен или указан с ошибкой')
+
+    def prepare_fingerprints(self) -> Print:
+        prints: Print = Print()
+        prints.create_finger()
+
+    def prepare_weapon(self):
+        weapon: WeaponClue = WeaponClue()
+        fingerprints: Print = self.prepare_fingerprints()
+        fingerprints.owner = self.guilty
+        blood: Blood = Blood()
+        blood.create_weapon()
+        weapon.additional_clue.append(fingerprints)
+        weapon.additional_clue.append(blood)
