@@ -382,6 +382,12 @@ class WeaponClue(Clue):
     type: str = "weapon"
     additional_clue: list = field(default_factory=lambda: [])
 
+    def random_name(self) -> None:
+        name = random.choice([["кинжал",
+                               "дубина",
+                               "пистолет"]])
+        self.name += (" :" + name)
+
     def create_name(self, name: str) -> None:
         self.name += (" :" + name)
 
@@ -485,6 +491,10 @@ class Murder(Case):
         prints: Print = Print()
         prints.create_finger()
 
+    def prepare_footprints(self) -> Print:
+        prints: Print = Print()
+        prints.create_footprints()
+
     def prepare_weapon(self):
         weapon: WeaponClue = WeaponClue()
         fingerprints: Print = self.prepare_fingerprints()
@@ -493,3 +503,4 @@ class Murder(Case):
         blood.create_weapon()
         weapon.additional_clue.append(fingerprints)
         weapon.additional_clue.append(blood)
+        weapon.random_name()
