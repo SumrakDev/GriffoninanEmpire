@@ -1,5 +1,5 @@
 import random
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 
 """Локации"""
 
@@ -40,6 +40,10 @@ class Location:
 
     def set_case(self, bool: bool) -> None:
         self.case = bool
+
+    def parametr_check(self):
+        for key, value in asdict(self).items():
+            print(f'{key}: {value}')
 
 
 """НПС"""
@@ -215,6 +219,10 @@ class NPCmain:
                    f'Хвост: {self.param["tail"]}\n')
         print(summary)
 
+    def parametr_check(self):
+        for key, value in asdict(self).items():
+            print(f'{key}: {value}')
+
 
 @dataclass
 class Griffon(NPCmain):
@@ -305,6 +313,10 @@ class Clue:
             return f'Пренадлежит: {npc_name} {npc_surname}'
         else:
             return 'Улика не имеет отношения к проверяемому'
+    
+    def parametr_check(self):
+        for key, value in asdict(self).items():
+            print(f'{key}: {value}')
 
 
 @dataclass
@@ -409,6 +421,10 @@ class Item:
     def create_clue(self, clue: Clue) -> None:
         self.params[clue.name] = clue
 
+    def parametr_check(self):
+        for key, value in asdict(self).items():
+            print(f'{key}: {value}')
+
 
 @dataclass
 class Weapon(Item):
@@ -457,6 +473,9 @@ class Case:
     def prepare_clues(self, clue: Clue) -> None:
         self.clues.append(clue)
 
+    def parametr_check(self):
+        for key, value in asdict(self).items():
+            print(f'{key}: {value}')
 
 @dataclass
 class Murder(Case):
